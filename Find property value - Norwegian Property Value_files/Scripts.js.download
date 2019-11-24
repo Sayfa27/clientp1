@@ -1,0 +1,60 @@
+function setSelect(f,v)
+{
+	var i,n;
+	for(i=0,n=f.length;i<n && !(f[i].value==v || f[i].value=='' && f[i].text==v);i++);
+	if(i<n) if(f.selectedIndex!=i) f.selectedIndex=i;
+}
+
+function setCheckbox(f,v)
+{
+	f.checked=(f.value==v)
+}
+
+function setRadio(f,v)
+{
+	var i,n;
+	for(i=0,n=f.length;i<n && f[i].value!=v;i++);
+	if(i<n) if(!f[i].checked) f[i].checked=true;
+}
+
+function trim(s)
+{
+	var i,j,n,c;
+
+	n=s.length;
+	for(var i=0,c=s.charAt(i  ); i<n && (c==' ' || c=='\r' || c=='\n' || c=='\t'); i++,c=s.charAt(i  ));
+	for(var j=n,c=s.charAt(j-1); j>i && (c==' ' || c=='\r' || c=='\n' || c=='\t'); j--,c=s.charAt(j-1));
+	return(j-i==n?s:s.substring(i,j))
+}
+
+function AJAX(prm,id,callback)
+{
+	var url="/AJAX.asp?"+(prm?prm:""),s;
+	
+	var req = (window.XMLHttpRequest?new XMLHttpRequest():new ActiveXObject("Microsoft.XMLHTTP"))
+	if(arguments.length==3)
+	{
+		req.open("GET", url, true);
+		req.onload=function(e)
+		{
+		  if(req.readyState==4 && req.status==200)
+				if(id && id!="")
+					document.getElementById(id).innerHTML=req.responseText;
+				else
+					callback(req.responseText);
+		};
+		//console.log("ASYNC:"+url);
+		req.send(null);
+	}
+	else
+	{
+		//console.log("SYNC:"+url);
+		req.open("GET", url, false);
+		req.send(null);
+		s=req.responseText;
+		req=null;
+	
+		if(id && id!="") document.getElementById(id).innerHTML=s;
+		else return(s);
+	}
+}
